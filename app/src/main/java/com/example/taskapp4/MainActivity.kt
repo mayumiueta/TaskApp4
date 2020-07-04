@@ -1,5 +1,8 @@
 package com.example.taskapp4
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import kotlinx.android.synthetic.main.activity_main.*
 import android.content.Intent
 import android.os.Bundle
@@ -30,8 +33,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+          val intent = Intent(this@MainActivity, InputActivity::class.java)
+            startActivity(intent)
         }
 
         //Realmの設定
@@ -67,6 +70,16 @@ class MainActivity : AppCompatActivity() {
                 mRealm.beginTransaction()
                 mRealm.copyToRealmOrUpdate(task)
                 mRealm.commitTransaction()
+
+                val resultsIntent = Intent(applicationContext, TaskAlarmReceiver::class.java)
+                val resultsPendingIntent = PendingIntent.getBroadcast(
+                    this@MainActivity,
+                    task.id,
+                    resultsIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+ val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                alarmManager.cancel(resultsPendingIntent)
 
                 reloadListView()
             }

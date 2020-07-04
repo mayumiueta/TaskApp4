@@ -32,6 +32,9 @@
                 android:value="com.example.taskapp4.MainActivity"/>
 
         </activity>
+
+        <receiver android:name=".TaskAlarmReceiver"/>
+
     </application>
 
 </manifest>
