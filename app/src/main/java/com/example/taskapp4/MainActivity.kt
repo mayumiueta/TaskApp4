@@ -14,6 +14,7 @@ import io.realm.RealmChangeListener
 import io.realm.Sort
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_input.*
 import java.util.*
 
 const val EXTRA_TASK = "com.example.taskapp4.TASK"
@@ -31,6 +32,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        search_button.setOnClickListener{
+            val taskRealmResults = mRealm.where(Task::class.java).equalTo("category", search_bar.text.toString()).findAll().sort("date", Sort.DESCENDING)
+
+            // 上記の結果を、TaskList としてセットする
+            mTaskAdapter.taskList = mRealm.copyFromRealm(taskRealmResults)
+
+            // TaskのListView用のアダプタに渡す
+            listView1.adapter = mTaskAdapter
+
+            // 表示を更新するために、アダプターにデータが変更されたことを知らせる
+            mTaskAdapter.notifyDataSetChanged()
+        }
 
         fab.setOnClickListener { view ->
           val intent = Intent(this@MainActivity, InputActivity::class.java)
